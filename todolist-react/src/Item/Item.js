@@ -23,17 +23,19 @@ class Item extends Component {
 
     del = async () => {
         this.setState({active: false});
-        await axios.post(`http://127.0.0.1:8000/todolist/delete/`, {
-                "id": this.state.id});
+        await axios.delete(`http://127.0.0.1:8000/todolist/items/`+this.state.id+`/`);
         this.update();
     };
 
     mark = async (event)=>{
         event.preventDefault();
         console.log(this.state);
-        await axios.post(`http://127.0.0.1:8000/todolist/mark/`,{
+        await axios.put(`http://127.0.0.1:8000/todolist/items/`+this.state.id+`/`,{
             "done": true,
-            "id": this.state.id
+            "id": this.state.id,
+            "expireDate": this.state.expire,
+            "title": this.state.title,
+            "details": this.state.details
         }).then(function (res) {
             console.log(res);
         }).catch(function (error) {

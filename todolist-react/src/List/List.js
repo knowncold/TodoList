@@ -21,10 +21,11 @@ class List extends Component {
     }
 
     update = async () => {
-        const res = await axios.get(`http://127.0.0.1:8000/todolist/list/`);
+        const res = await axios.get(`http://127.0.0.1:8000/todolist/items/`);
         const tmp = [];
+        console.log(res.data[0]);
         for (let i=0;i<res.data.length;i++){
-            const item = JSON.parse(res.data[i]);
+            const item = res.data[i];
             tmp.push(<Item title={item.title} details={item.details} expire={item.expireDate} id={item.id} done={item.done} key={i} update={this.update} revise={this.reviseItem}/>);
         }
         this.setState({itemList : tmp});

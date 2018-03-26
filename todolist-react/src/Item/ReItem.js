@@ -6,7 +6,7 @@ import {FormControl, ControlLabel, FormGroup, Form, Button} from 'react-bootstra
 class ReItem extends Component {
     constructor(props) {
         super(props);
-        this.state = {done: this.props.done, active: true, title: this.props.title, detail: this.props.details, expire: this.props.expire, id: this.props.id};
+        this.state = {done: this.props.done, active: true, title: this.props.title, details: this.props.details, expire: this.props.expire, id: this.props.id};
         this.handleTitleChange = this.handleTitleChange.bind(this);
         this.handleExpireDataChange = this.handleExpireDataChange.bind(this);
         this.handleDetailsChange = this.handleDetailsChange.bind(this);
@@ -16,7 +16,7 @@ class ReItem extends Component {
     updateItem = async (event) => {
         event.preventDefault();
         this.setState({active: false});
-        await axios.post(`http://127.0.0.1:8000/todolist/update/`, this.state);
+        await axios.put(`http://127.0.0.1:8000/todolist/items/`+this.state.id+`/`, this.state);
         console.log(this.state);
         this.update();
     };
@@ -30,7 +30,7 @@ class ReItem extends Component {
     }
 
     handleDetailsChange(event){
-        this.setState({detail: event.target.value});
+        this.setState({details: event.target.value});
     }
 
     handleExpireDataChange(event){
@@ -49,7 +49,7 @@ class ReItem extends Component {
                             </FormGroup>&nbsp;
                             <FormGroup controlId="">
                                 <ControlLabel>Details</ControlLabel>&nbsp;
-                                <FormControl type="text" onChange={this.handleDetailsChange} placeholder={this.state.detail}/>
+                                <FormControl type="text" onChange={this.handleDetailsChange} placeholder={this.state.details}/>
                             </FormGroup>&nbsp;
                             <FormGroup controlId="test">
                                 <ControlLabel>ExpireDate</ControlLabel>&nbsp;

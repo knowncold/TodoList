@@ -16,7 +16,7 @@ class NewItem extends Component {
     addItem = async (event) => {
         event.preventDefault();
         this.setState({active: false});
-        await axios.post(`http://127.0.0.1:8000/todolist/add/`, this.state);
+        await axios.post(`http://127.0.0.1:8000/todolist/items/`, this.state);
         console.log(this.state);
         this.update();
     };
@@ -30,11 +30,11 @@ class NewItem extends Component {
     }
 
     handleDetailsChange(event){
-        this.setState({detail: event.target.value});
+        this.setState({details: event.target.value});
     }
 
     handleExpireDataChange(event){
-        this.setState({expire: event.target.value});
+        this.setState({expireDate: event.target.value});
     }
 
     render() {
