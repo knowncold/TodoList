@@ -11,14 +11,15 @@ class NewItem extends Component {
         this.handleExpireDataChange = this.handleExpireDataChange.bind(this);
         this.handleDetailsChange = this.handleDetailsChange.bind(this);
         this.addItem = this.addItem.bind(this);
+        this.update = this.update.bind(this);
     }
 
     addItem = async (event) => {
         event.preventDefault();
         this.setState({active: false});
         await axios.post(`http://127.0.0.1:8000/todolist/items/`, this.state);
-        console.log(this.state);
         this.update();
+        this.props.doneAdd();
     };
 
     update(){
@@ -40,7 +41,7 @@ class NewItem extends Component {
     render() {
         return (
             <div>
-                {this.state.active ?
+                {this.state.active &&
                     <div>
                     <Form inline onSubmit={this.addItem}>
                         <FormGroup controlId="title">
@@ -58,8 +59,6 @@ class NewItem extends Component {
                         <Button type="submit" bsStyle="success">保存</Button>
                     </Form>
                     </div>
-                :
-                null
             }
             </div>
         );

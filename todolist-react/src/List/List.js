@@ -4,57 +4,52 @@ import Item from '../Item/Item';
 import axios from 'axios';
 import {Table, Button} from 'react-bootstrap';
 import ReItem from "../Item/ReItem";
+import uuid from 'uuid';
 
 class List extends Component {
     constructor(props) {
         super(props);
-        this.state = {count: 0, reItem: []};
+        this.state = {itemList:[], newItemList: [], hasRevise: false, hasAdd: false};
         this.addItem = this.addItem.bind(this);
         this.reviseItem = this.reviseItem.bind(this);
         this.update = this.update.bind(this);
+        this.doneRevise = this.doneRevise.bind(this);
+        this.doneAdd = this.doneAdd.bind(this);
         this.update();
     }
 
-    addItem(event){
-        event.preventDefault();
-        this.setState({count: this.state.count + 1});
+    addItem(){
+        this.setState({hasAdd: true});
+    }
+
+    doneAdd(){
+        this.setState({hasAdd: false});
     }
 
     update = async () => {
         const res = await axios.get(`http://127.0.0.1:8000/todolist/items/`);
-        const tmp = [];
-        console.log(res.data[0]);
+        const tmpList = [];
         for (let i=0;i<res.data.length;i++){
-            const item = res.data[i];
-            tmp.push(<Item title={item.title} details={item.details} expire={item.expireDate} id={item.id} done={item.done} key={i} update={this.update} revise={this.reviseItem}/>);
+            tmpList.push(res.data[i]);
         }
-        this.setState({itemList : tmp});
+        this.setState({itemList : tmpList});
     };
 
     reviseItem(title, id, done, details, expire) {
-        let newReItem = this.state.reItem;
-        const item = {
-            "title": title,
-            "id": id,
-            "details": details,
-            "expire": expire,
-            "done": done
-        };
-        newReItem.push(item);
-        this.setState({reItem: newReItem});
+        this.setState({hasRevise: true, reItem: {
+            title,
+            id,
+            details,
+            expire,
+            done
+        }});
+    }
+
+    doneRevise(){
+        this.setState({hasRevise: false});
     }
 
     render() {
-        const newItemList = [];
-        for (let i=0;i<this.state.count;i++){
-            newItemList.push(<NewItem key={i} update={this.update}/>);
-        }
-        const reItemList = [];
-        for (let i=0;i<this.state.reItem.length;i++){
-            let item = this.state.reItem[i];
-            reItemList.push(<ReItem done={item.done} details={item.details} id={item.id} title={item.title} expire={item.expire} update={this.update} key={i}/>);
-        }
-        console.log(this.state.itemList);
         return (
             <div className="list">
                 <h1>ToDoList</h1>
@@ -68,15 +63,21 @@ class List extends Component {
                     </tr>
                     </thead>
                     <tbody>
-                    {this.state.itemList}
+                    {this.state.itemList.map( (item) => {
+                        return <Item title={item.title} details={item.details} expire={item.expireDate} id={item.id} done={item.done} key={uuid.v4()} update={this.update} revise={this.reviseItem}/>;
+                    })}
                     </tbody>
                 </Table>
                 <Button bsStyle="primary" onClick={this.addItem}>添加</Button>
                 <div className="Addition-Item">
-                {newItemList.map(function (obj) {
-                    return obj;
-                })}
-                {reItemList}
+                {this.state.hasAdd &&
+                    <NewItem update={this.update} doneAdd={this.doneAdd}/>
+                }
+                {this.state.hasRevise &&
+                    <ReItem done={this.state.reItem.done} details={this.state.reItem.details}
+                            id={this.state.reItem.id} title={this.state.reItem.title}
+                            expire={this.state.reItem.expire} update={this.update} doneRevise={this.doneRevise}/>
+                }
                 </div>
             </div>
         )
